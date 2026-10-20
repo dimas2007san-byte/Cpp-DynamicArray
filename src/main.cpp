@@ -1,36 +1,37 @@
 #include <iostream>
+#include <stdexcept>
 #include "../include/DynamicArray.h"
 
+
 int main() {
-    std::cout << "Task 1\n";
-    DynamicArray arr1(3);
-    arr1.set(0, 10);
-    arr1.set(1, 20);
-    arr1.set(2, 250); // должно выдать ошибку
-    std::cout << "arr1: ";
-    arr1.print();
+    std::cout << "=== Part 2: Exceptions Demo ===\n\n";
 
-    std::cout << "\nTask 2\n";
-    DynamicArray arr2 = arr1;
-    arr2.set(0, 99);
-    std::cout << "original: "; arr1.print();
-    std::cout << "copy:     "; arr2.print();
+    // 1. Проверка std::out_of_range
+    try {
+        DynamicArray arr(2);
+        std::cout << "[Test 1] Trying to get element at index 5...\n";
+        arr.get(5);
+    } catch (const std::out_of_range& e) {
+        std::cout << "Caught std::out_of_range: " << e.what() << "\n\n";
+    }
 
-    std::cout << "\nTask 3\n";
-    arr1.push_back(30);
-    arr1.push_back(50);
-    std::cout << "arr1 after push: ";
-    arr1.print();
+    // 2. Проверка std::invalid_argument
+    try {
+        DynamicArray arr(2);
+        std::cout << "[Test 2] Trying to set element at index 0 to 150...\n";
+        arr.set(0, 150);
+    } catch (const std::invalid_argument& e) {
+        std::cout << "Caught std::invalid_argument: " << e.what() << "\n\n";
+    }
 
-    std::cout << "\nTask 4\n";
-    DynamicArray arr3(2);
-    arr3.set(0, 5);
-    arr3.set(1, 5);
-    std::cout << "arr3: "; arr3.print();
-    
-    arr1.add(arr3);
-    std::cout << "arr1 + arr3: ";
-    arr1.print();
+    // 3. Проверка std::bad_alloc
+    try {
+        std::cout << "[Test 3] Trying to allocate an excessively large amount of memory...\n";
+        DynamicArray hugeArr(2000000000); 
+    } catch (const std::bad_alloc& e) {
+        std::cout << "Caught std::bad_alloc: " << e.what() << "\n\n";
+    }
 
+    std::cout << "All exceptions caught successfully. Program finished.\n";
     return 0;
 }

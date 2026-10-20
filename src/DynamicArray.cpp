@@ -1,5 +1,6 @@
 #include "../include/DynamicArray.h"
 #include <iostream>
+#include <stdexcept>
 
 DynamicArray::DynamicArray(int initialSize) {
     size = initialSize;
@@ -26,21 +27,17 @@ void DynamicArray::print() {
 
 void DynamicArray::set(int index, int value) {
     if (index < 0 || index >= size) {
-        std::cout << "Error: invalid index\n";
-        return;
+        throw std::out_of_range("Index out of range");
     }
-    // по условию от -100 до 100
     if (value < -100 || value > 100) {
-        std::cout << "Error: bad value\n";
-        return;
+        throw std::invalid_argument("Value must be in the range from -100 to 100");
     }
     data[index] = value;
 }
 
 int DynamicArray::get(int index) {
     if (index < 0 || index >= size) {
-        std::cout << "Error: invalid index\n";
-        return 0;
+        throw std::out_of_range("Index out of range");
     }
     return data[index];
 }
@@ -56,23 +53,25 @@ DynamicArray::DynamicArray(const DynamicArray& other) {
 }
 
 void DynamicArray::push_back(int value) {
+    // Проверяем диапазон значений
     if (value < -100 || value > 100) {
-        std::cout << "Error: bad value\n";
-        return;
+        throw std::invalid_argument("Value must be between -100 and 100");
     }
 
-    // расширяем массив если места больше нет
+    // Если массив заполнен — расширяем его в 2 раза
     if (size == capacity) {
-        int newCapacity = (capacity == 0) ? 1 : capacity * 2;
-        int* newData = new int[newCapacity];
-        
-        for (int i = 0; i < size; i++) {
+        if (capacity == 0) {
+            capacity = 1;
+        } else {
+            capacity = capacity * 2;
+        }
+
+        int* newData = new int[capacity];
+        for (int i = 0; i < size; ++i) {
             newData[i] = data[i];
         }
-        
         delete[] data;
         data = newData;
-        capacity = newCapacity;
     }
 
     data[size] = value;
