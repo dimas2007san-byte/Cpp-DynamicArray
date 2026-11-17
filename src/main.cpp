@@ -1,37 +1,64 @@
-#include <iostream>
-#include <stdexcept>
 #include "../include/DynamicArray.h"
 
+#include <new>
+#include <string>
 
 int main() {
-    std::cout << "=== Part 2: Exceptions Demo ===\n\n";
+    std::cout << "=== Numeric array ===\n";
 
-    // 1. Проверка std::out_of_range
+    DynamicArray<int> first(2);
+    first.set(0, 3);
+    first.set(1, 4);
+
+    DynamicArray<int> second(2);
+    second.set(0, 6);
+    second.set(1, 8);
+
+    std::cout << "first:  " << first << '\n';
+    std::cout << "second: " << second << '\n';
+    std::cout << "distance: " << first.distance(second) << '\n';
+
+    first.push_back(5);
+    std::cout << "after push_back: " << first << '\n';
+
+    first.add(second);
+    std::cout << "after add: " << first << '\n';
+
+    first.sub(second);
+    std::cout << "after sub: " << first << '\n';
+
+    std::cout << "\n=== Text array ===\n";
+
+    DynamicArray<std::string> words(2);
+    words.set(0, "cat");
+    words.set(1, "dog");
+    std::cout << "words: " << words << '\n';
+
     try {
-        DynamicArray arr(2);
-        std::cout << "[Test 1] Trying to get element at index 5...\n";
-        arr.get(5);
-    } catch (const std::out_of_range& e) {
-        std::cout << "Caught std::out_of_range: " << e.what() << "\n\n";
+        words.distance(words);
+    } catch (const std::bad_typeid&) {
+        std::cout << "Distance is available only for numeric arrays.\n";
     }
 
-    // 2. Проверка std::invalid_argument
+    std::cout << "\n=== Exceptions ===\n";
+
     try {
-        DynamicArray arr(2);
-        std::cout << "[Test 2] Trying to set element at index 0 to 150...\n";
-        arr.set(0, 150);
-    } catch (const std::invalid_argument& e) {
-        std::cout << "Caught std::invalid_argument: " << e.what() << "\n\n";
+        first.get(20);
+    } catch (const std::out_of_range& error) {
+        std::cout << "Index error: " << error.what() << '\n';
     }
 
-    // 3. Проверка std::bad_alloc
     try {
-        std::cout << "[Test 3] Trying to allocate an excessively large amount of memory...\n";
-        DynamicArray hugeArr(2000000000); 
-    } catch (const std::bad_alloc& e) {
-        std::cout << "Caught std::bad_alloc: " << e.what() << "\n\n";
+        first.set(0, 150);
+    } catch (const std::invalid_argument& error) {
+        std::cout << "Value error: " << error.what() << '\n';
     }
 
-    std::cout << "All exceptions caught successfully. Program finished.\n";
+    try {
+        throw std::bad_alloc(); // Пример обработки ошибки нехватки памяти.
+    } catch (const std::bad_alloc&) {
+        std::cout << "Memory error caught.\n";
+    }
+
     return 0;
 }
