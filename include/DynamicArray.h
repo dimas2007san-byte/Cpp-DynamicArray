@@ -28,6 +28,25 @@ private:
     }
 
 public:
+    class ElementProxy {
+    private:
+        DynamicArray& array;
+        int index;
+
+    public:
+        ElementProxy(DynamicArray& source, int position)
+            : array(source), index(position) {}
+
+        ElementProxy& operator=(const T& value) {
+            array.set(index, value);
+            return *this;
+        }
+
+        operator T() const {
+            return array.get(index);
+        }
+    };
+
     explicit DynamicArray(int initialSize)
         : data(nullptr), size(initialSize), capacity(initialSize) {
         if (initialSize < 0) {
@@ -77,6 +96,20 @@ public:
             throw std::out_of_range("Index out of range");
         }
 
+        return data[index];
+    }
+
+    ElementProxy operator[](int index) {
+        if (index < 0 || index >= size) {
+            throw std::out_of_range("Index out of range");
+        }
+        return ElementProxy(*this, index);
+    }
+
+    const T& operator[](int index) const {
+        if (index < 0 || index >= size) {
+            throw std::out_of_range("Index out of range");
+        }
         return data[index];
     }
 
@@ -144,6 +177,86 @@ public:
         } else {
             throw std::bad_typeid();
         }
+    }
+
+    bool operator==(const DynamicArray& other) const {
+        if (size != other.size) {
+            return false;
+        }
+
+        for (int i = 0; i < size; ++i) {
+            if (data[i] != other.data[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool operator!=(const DynamicArray& other) const {
+        return !(*this == other);
+    }
+
+    DynamicArray& operator+=(const DynamicArray& other) {
+        if constexpr (std::is_arithmetic<T>::value) {
+            for (int i = 0; i < size; ++i) {
+                T otherValue = (i < other.size) ? other.data[i] : T{};
+                set(i, data[i] + otherValue);
+            }
+        } else {
+            throw std::bad_typeid();
+        }
+        return *this;
+    }
+
+    DynamicArray& operator-=(const DynamicArray& other) {
+        if constexpr (std::is_arithmetic<T>::value) {
+            for (int i = 0; i < size; ++i) {
+                T otherValue = (i < other.size) ? other.data[i] : T{};
+                set(i, data[i] - otherValue);
+            }
+        } else {
+            throw std::bad_typeid();
+        }
+        return *this;
+    }
+
+    DynamicArray& operator+=(const T& value) {
+        if constexpr (std::is_arithmetic<T>::value) {
+            for (int i = 0; i < size; ++i) {
+                set(i, data[i] + value);
+            }
+        } else {
+            throw std::bad_typeid();
+        }
+        return *this;
+    }
+
+    DynamicArray& operator-=(const T& value) {
+        if constexpr (std::is_arithmetic<T>::value) {
+            for (int i = 0; i < size; ++i) {
+                set(i, data[i] - value);
+            }
+        } else {
+            throw std::bad_typeid();
+        }
+        return *this;
+    }
+
+    T* begin() {
+        return data;
+    }
+
+    T* end() {
+        return data + size;
+    }
+
+    const T* begin() const {
+        return data;
+    }
+
+    const T* end() const {
+        return data + size;
     }
 };
 

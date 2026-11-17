@@ -27,6 +27,38 @@ int main() {
     first.sub(second);
     std::cout << "after sub: " << first << '\n';
 
+    std::cout << "\n=== Part 4 operators ===\n";
+
+    first[0] = 10;
+    std::cout << "after first[0] = 10: " << first << '\n';
+    std::cout << "first[0]: " << first[0] << '\n';
+
+    DynamicArray<int> copy(first);
+    std::cout << "first == copy: " << (first == copy) << '\n';
+    std::cout << "first != second: " << (first != second) << '\n';
+
+    first += second;
+    std::cout << "after first += second: " << first << '\n';
+    first -= second;
+    std::cout << "after first -= second: " << first << '\n';
+
+    first += 2;
+    std::cout << "after first += 2: " << first << '\n';
+    first -= 2;
+    std::cout << "after first -= 2: " << first << '\n';
+
+    for (auto& value : first) {
+        value += 1;
+    }
+    std::cout << "after changing items in range loop: " << first << '\n';
+
+    const DynamicArray<int>& readOnlyFirst = first;
+    std::cout << "Read with const iterator: ";
+    for (const auto& value : readOnlyFirst) {
+        std::cout << value << ' ';
+    }
+    std::cout << '\n';
+
     std::cout << "\n=== Text array ===\n";
 
     DynamicArray<std::string> words(2);
